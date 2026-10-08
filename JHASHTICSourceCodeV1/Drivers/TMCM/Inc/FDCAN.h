@@ -6,6 +6,7 @@
 #define TMCM_CAN_ADDRESS 0x20
 #define PCM_CAN_ADDRESS 0x10
 
+
 #define MOTORSTATE_FUNCTIONID			0x32 //from PCM 0x32 , from PCAN 0x77
 #define PRECHARGE_FUNCTIONID			0x33 // from PCM 0x33, from PCAN 0x76
 #define CONTINUOUS_DATA                         0x34

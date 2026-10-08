@@ -129,7 +129,7 @@ void calculateAccelerationVars(systemState *ss, accelControl *a){
   a->accelTorqueEstimated = a->accel_Radsec2F * ESTIMATED_J_KGM2;
   a->accelARMS = a->accelTorqueEstimated/KT;
  
-  // this is the accel FF, it has a sign baed on the direction.
+  // this is the accel FF, it has a sign based on the direction.
   // Convert to s16 using 32-bit int to prevent overflow before clamping
   int32_t ff_calculated = (int32_t)(a->accelARMS * ARMS_TO_S16_CONVERSION_FACTOR * (float)ss->motorDirection);
   
@@ -139,4 +139,94 @@ void calculateAccelerationVars(systemState *ss, accelControl *a){
     ff_calculated = -MAX_ACCEL_FF_S16;
   }
   a->accelFF_PK_s16 = (int16_t)ff_calculated ;
+}
+
+
+
+float getCurrentVelocity_RadSec(ENCODER_Handle_t *pHandle){
+   
+  // 1. Extract the latest 1ms single-frame tick count (un-averaged) (completed capture in current 1 ms frame)
+    uint8_t current_idx;
+    if (pHandle->DeltaCapturesIndex == 0u) {
+        current_idx = pHandle->SpeedBufferSize - 1u;
+    } else {
+        current_idx = pHandle->DeltaCapturesIndex - 1u;
+    }
+
+    int32_t latest_ticks = pHandle->DeltaCapturesBuffer[current_idx];
+    
+    // 2. Convert raw ticks to instantaneous velocity (rad/s)
+    float w_raw_current = ((float)latest_ticks / (float)pHandle->PulseNumber) * (float)(2.0f * M_PI * 1000.0f);
+    return w_raw_current;
+}
+
+
+void ZeroLOVars(loadObserver *lo){
+  lo->currentVelocityRadsec = 0.0f;
+  lo->prevTorque_Nm =  0.0f;  
+  lo->compensationTorque_Nm = 0.0f;
+    // --- NEW: Luenberger Observer States ---
+  lo->theta_hat = 0.0f;  // Estimated position (rad)
+  lo->w_hat = 0.0f;      // Estimated velocity (rad/s) - Ultra clean!
+  lo->TL_hat = 0.0f;     // Estimated load torque (Nm)
+  
+  // --- NEW: Luenberger Gains ---
+  float p = OBSERVER_BANDWIDTH_P;
+  lo->l1 = 3.0f * p;
+  lo->l2 = 3.0f * p * p;
+  lo->l3 = p * p * p;
+
+}
+
+
+
+float getCurrentPosition_Rad(ENCODER_Handle_t *pHandle)
+{
+    // ST MCSDK mechanical angle: -32768 to 32767 corresponds to -PI to +PI
+    int16_t mecAngle_s16 = pHandle->_Super.hMecAngle;
+    
+    // Convert to radians [-PI to +PI]
+    float theta_raw = ((float)mecAngle_s16 / 32768.0f) * (float)M_PI;
+    
+    return theta_raw;
+}
+
+//thetaHat,velocity Hat and loadHat are estimates within the model.
+//realPosError = thetaMeasured - thetaHat. 
+//positionHat += dt * (velocityHat + const * positionError)  ~ thetaHat += Ts * (velocityHat + (realPosError*const1)
+//velocityHat += dt * ((prevTorqueNm - estimatedLoad)/J + (error * const2)) ~ velHat +=  dt * accel + (realPosError*const2)
+//loadHat += dt * (estimateJ *const3 * posError)
+void leunbergObserverExec(loadObserver *lo){
+    float Ts = 0.001f; // 1 ms loop time
+    
+    // 1. Read Actual Position in motorSpace
+    float theta_meas = getCurrentPosition_Rad(&ENCODER_M1) * (float)lo->localPolarity;
+
+    // 2. Calculate Error (Real Position - Estimated Position)
+    lo->e_rad = theta_meas - lo->theta_hat;
+    
+    // Wrap error to [-PI, PI] to handle continuous rotation wrap-arounds
+    if (lo->e_rad > PI_F)       { lo->e_rad -= 2.0f * PI_F; }
+    else if (lo->e_rad < -PI_F) { lo->e_rad += 2.0f * PI_F; }
+
+    // 3. Update Estimated Position (theta_hat)
+    lo->theta_hat += Ts * (lo->w_hat + (lo->l1 * lo->e_rad));
+    
+    // Wrap theta_hat to [-PI, PI] to stay in sync with the hardware encoder bounds
+    if (lo->theta_hat > PI_F)       { lo->theta_hat -= 2.0f * PI_F; }
+    else if (lo->theta_hat < -PI_F) { lo->theta_hat += 2.0f * PI_F; }
+
+    // 4. Update Estimated Velocity (w_hat)
+    // T_applied is lo->prevTorque_Nm (the torque applied during the last 1ms frame)
+    lo->w_hat += Ts * (((lo->prevTorque_Nm - lo->TL_hat) / ESTIMATED_J_KGM2) + (lo->l2 * lo->e_rad)); //velocity = Time * acceleration(applied-estimated/J) + error
+
+    // 5. Update Estimated Load Torque (TL_hat)
+    lo->TL_hat += Ts * (-lo->l3 * ESTIMATED_J_KGM2 * lo->e_rad);
+
+    // 6. Apply Compensation Gain
+    lo->compensationTorque_Nm = OBSERVER_COMP_GAIN_K * lo->TL_hat;
+    
+    // OPTIONAL: Overwrite currentVelocityRadsec with the ultra-clean estimated speed
+    // You can plot this against your old wRaw to see how much cleaner it is.
+    lo->currentVelocityRadsec = lo->w_hat; 
 }

@@ -299,6 +299,7 @@ __weak void STC_StopRamp( SpeednTorqCtrl_Handle_t * pHandle )
   *         Current(digit) = [Current(Amp) * 65536 * Rshunt * Aop]  /  Vdd micro
   */
 int16_t hTargetSpeedUserDefined, hMeasuredSpeedUserDefined, hTorqueReferenceUserDefined;
+int16_t hErrorOut;
 __weak int16_t STC_CalcTorqueReference( SpeednTorqCtrl_Handle_t * pHandle )
 {
   int32_t wCurrentReference;
@@ -347,6 +348,7 @@ __weak int16_t STC_CalcTorqueReference( SpeednTorqCtrl_Handle_t * pHandle )
     hMeasuredSpeed = SPD_GetAvrgMecSpeedUnit( pHandle->SPD );
     hMeasuredSpeedUserDefined = hMeasuredSpeed * 6;
     hError = hTargetSpeed - hMeasuredSpeed;
+    hErrorOut = hError;
     hTorqueReference = PI_Controller( pHandle->PISpeed, ( int32_t )hError );
 
     pHandle->SpeedRefUnitExt = wCurrentReference;

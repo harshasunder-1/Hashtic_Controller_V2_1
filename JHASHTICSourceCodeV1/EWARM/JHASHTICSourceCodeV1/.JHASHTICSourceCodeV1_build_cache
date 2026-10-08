@@ -8,11 +8,5 @@
                 <Path>E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\JHASHTICSourceCodeV1\List\JHASHTICSourceCodeV1.map</Path>
             </Output>
         </Parent>
-        <Parent>
-            <Path>E:\Harsha\Hashtic_Controller_V2-main\JHASHTICSourceCodeV1\EWARM\JHASHTICSourceCodeV1\Exe\JHASHTICSourceCodeV1.out</Path>
-            <Output>
-                <Path>E:\Harsha\Hashtic_Controller_V2-main\JHASHTICSourceCodeV1\EWARM\JHASHTICSourceCodeV1\List\JHASHTICSourceCodeV1.map</Path>
-            </Output>
-        </Parent>
     </Tool>
 </BuildDb>

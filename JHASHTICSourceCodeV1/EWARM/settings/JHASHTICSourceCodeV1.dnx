@@ -21,33 +21,34 @@
         <ByteLimit>50</ByteLimit>
     </Stack>
     <PlDriver>
-        <MemConfigValue>C:\Program Files\IAR Systems\Embedded Workbench 9.2\arm\config\debugger\ST\STM32G474QE.ddf</MemConfigValue>
         <FirstRun>0</FirstRun>
+        <MemConfigValue>C:\Program Files\IAR Systems\Embedded Workbench 9.2\arm\config\debugger\ST\STM32G474QE.ddf</MemConfigValue>
     </PlDriver>
     <StLinkDriver>
+        <stlinkserialNo>004F00323033511735393935</stlinkserialNo>
+        <stlinkfoundProbes />
         <LeaveTargetRunning>_ 0</LeaveTargetRunning>
         <CStepIntDis>_ 0</CStepIntDis>
         <stlinkResetStyle>0</stlinkResetStyle>
         <stlinkResetStrategy>2</stlinkResetStrategy>
-        <stlinkserialNo>004F00323033511735393935</stlinkserialNo>
-        <stlinkfoundProbes />
     </StLinkDriver>
     <ArmDriver>
         <EnforceMemoryConfiguration>1</EnforceMemoryConfiguration>
         <EnableCache>0</EnableCache>
     </ArmDriver>
     <DebugChecksum>
-        <Checksum>1616203498</Checksum>
+        <Checksum>3014547219</Checksum>
     </DebugChecksum>
     <Exceptions>
-        <StopOnThrow>_ 0</StopOnThrow>
         <StopOnUncaught>_ 0</StopOnUncaught>
+        <StopOnThrow>_ 0</StopOnThrow>
     </Exceptions>
     <Trace1>
         <Enabled>0</Enabled>
         <ShowSource>1</ShowSource>
     </Trace1>
     <Disassembly>
+        <MixedMode>1</MixedMode>
         <InstrCount>0</InstrCount>
     </Disassembly>
     <CallStack>
@@ -71,8 +72,14 @@
         <ITMportsLogFile>0</ITMportsLogFile>
         <ITMlogFile>$PROJ_DIR$\ITM.log</ITMlogFile>
     </SWOTraceHWSettings>
+    <struct_types>
+        <Fmt0>Config-signForCWRotation	3	0</Fmt0>
+        <Fmt1>FDCAN_RxHeaderTypeDef-Identifier	3	0</Fmt1>
+    </struct_types>
     <watch_formats>
-        <Fmt0>{W}42:ss.CL_DeltaRPMThreshold	3	0</Fmt0>
+        <Fmt0>{W}42:dst_address	4	0</Fmt0>
+        <Fmt1>{W}42:source_address	4	0</Fmt1>
+        <Fmt2>{W}42:ss.CL_DeltaRPMThreshold	3	0</Fmt2>
     </watch_formats>
     <Trace2>
         <Enabled>0</Enabled>

@@ -25,8 +25,9 @@ extern Temp t;
 extern brakeCtrl b;
 extern logController logC;
 extern accelControl a;
+extern loadObserver lo;
 //CAN variables here
-uint32_t functionID,source_address, destination_address;
+uint32_t functionID,source_address, dst_address;
 
 FDCAN_TxHeaderTypeDef TxHeader;
 uint8_t TxData[8];
@@ -45,6 +46,7 @@ extern uint8_t cc_stopMsg_oneTime;
 extern uint8_t cc_turnOff;
 
 extern uint8_t regenRampApplied;
+extern uint32_t startTickTime;
 
 void FDCAN_TxInit(void)
 {
@@ -272,8 +274,27 @@ void FDCAN_parseForMotor(void){ // This gets toggled inside the interrupt. Whene
 
   functionID=((RxHeader.Identifier)&0xFF0000)>>16;
   source_address=(RxHeader.Identifier)&0xFF;
+  dst_address = ((RxHeader.Identifier)&0xFF00) >> 8;
   
-
+  if (dst_address != TMCM_CAN_ADDRESS){
+    return;
+  }
+  if (source_address != PCM_CAN_ADDRESS){
+    return;
+  }
+  
+  
+  //10 sec after we turn ON, for one time, we dont allow any CAN msg to work.
+  if (ss.startingDeadTimeCrossed == 0){
+    uint32_t dt = HAL_GetTick() - startTickTime;
+    if (dt > 10000){
+      ss.startingDeadTimeCrossed = 1;
+    }else{
+      return;
+    }
+  }
+  
+  
   switch (functionID) {
     
   case MOTORSTATE_FUNCTIONID:
@@ -440,14 +461,28 @@ void FDCAN_parseForMotor(void){ // This gets toggled inside the interrupt. Whene
             if (c.positionInPod == LEFT_SIDE){ss.podDirection = 1;}  // opposite for above
             if (c.positionInPod == RIGHT_SIDE){ss.podDirection = -1;}
           }
+          else{
+            return;
+          }
           
           ss.motorDirection = ss.podDirection;
+          lo.localPolarity =  ss.motorDirection * c.signForCWRotation; //needed for load observer calcs
           
           ss.targetRPM = canContIp.controlQty;
           ss.brakeDistance = canContIp.indexID;
           
+          //safety checks
+          if (ss.targetRPM >= 2500){
+            return;
+          }
+          if (ss.brakeDistance >= 500){
+            return;
+          }
+                   
           //calculate acceleration vars here.
           calculateAccelerationVars(&ss, &a);
+          //Zero LO vars
+          ZeroLOVars(&lo); //turned on after the kick torque is applied
                    
           ss.CL_DeltaRPMThreshold =  Calculate_CLDeltaRPMThreshold(ss.targetRPM);
           ss.loggingOn = 1;
@@ -475,6 +510,8 @@ void FDCAN_parseForMotor(void){ // This gets toggled inside the interrupt. Whene
           FDCAN_SendPCMAckMsg(1);
                     
           //start the StartSeq
+          resetStartSeqParams( &ssq);
+          resetStartSeqErrorState( &ssq);
           ssq.PCM_startCommand = 1;
           
           //MC_ProgramSpeedRampMotor1(ss.direction * ss.targetRPM/6, 10);

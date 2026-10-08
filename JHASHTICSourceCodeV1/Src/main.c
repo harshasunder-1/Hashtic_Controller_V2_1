@@ -69,6 +69,7 @@ brakeCtrl b;
 EEConfig eecfg;
 logController logC;
 accelControl a;
+loadObserver lo;
 
 extern FOCVars_t FOCVars[1];
 extern int16_t hTargetSpeedUserDefined;
@@ -155,7 +156,7 @@ uint8_t ssqErrorState = 0,resetStartSeq=0;
 State_t start_state;
 
 uint8_t regenRampApplied = 0;
-
+uint32_t startTickTime = 0;
 extern MCI_Handle_t * pMCI[NBR_OF_MOTORS];
 
 /* USER CODE END 0 */
@@ -322,15 +323,31 @@ int main(void)
     }
   }
   
-    
+    // TUNING FROM CLAUDE Document - CHECK AGAIN.
     // Proportional Gain: Sets Kp = 55.6 Nm/(rad/s)
-    PID_SetKP(&PIDSpeedHandle_M1, 24344);
+  /*  PID_SetKP(&PIDSpeedHandle_M1, 24344);
     PID_SetKPDivisorPOW2(&PIDSpeedHandle_M1, 1);
 
     // Integral Gain: Sets Ki*Ts = 2.22 Nm/(rad/s)
     PID_SetKI(&PIDSpeedHandle_M1, 15552);
-    PID_SetKPDivisorPOW2(&PIDSpeedHandle_M1, 5);
+    PID_SetKIDivisorPOW2(&PIDSpeedHandle_M1, 5); */
+  
+    //rd1 - 4800/16 , 8,512
+    // rd2 - 4800,32 , 8/512
+    //rd3 - 6800,32,  8,1024
+  
+  
+  // Moderate Proportional Gain (Effective Kp = 1000)
+    PID_SetKPDivisorPOW2(&PIDSpeedHandle_M1, 4); // Divisor = 32
+    PID_SetKP(&PIDSpeedHandle_M1, 16000);         // 4800 / 32 = 150
 
+    // Moderate Integral Gain (Effective Ki = 10)
+    PID_SetKIDivisorPOW2(&PIDSpeedHandle_M1, 8); // Divisor = 256
+    PID_SetKI(&PIDSpeedHandle_M1, 2560); // initally 512
+
+    //to prevent spurious turns ons, for ten sec from here, any can msg received is ingested, but not acted upon
+    startTickTime = HAL_GetTick();
+    ss.startingDeadTimeCrossed = 0;
      
   // TODO: we also want to check temperature here and see if it is available, and also if its within limits when starting.
   // TODO : check voltage, if voltage not there, throw error and send codes.
@@ -444,6 +461,7 @@ int main(void)
     
     if(lcc.stop){
       a.ffActive = 0;
+      lo.active = 0;
       TMCM_SpeedLoop_TurnOff(); 
       laptopCC_stop(&lcc);
       ss.targetRPM =  0;
@@ -461,6 +479,7 @@ int main(void)
       if (ss.travelledDist >= ss.brakeDistance){ 
         /* apply Regen one time only and when speed falls below minSpeed, applyBrake*/
         if (regenRampApplied == 0){
+          lo.active = 0;
           a.ffActive = 0;
           applyRegen(ss.motorDirection); 
           regenRampApplied = 1;
@@ -483,6 +502,7 @@ int main(void)
     if (ss.engageBrake == 1){
         if (b.brakeCounter == 0){
            a.ffActive = 0;
+           lo.active = 0;
            TMCM_SpeedLoop_TurnOff();
            FDCAN_SendControlledBrakeMsg();     
            ss.brakeState++;
@@ -496,10 +516,8 @@ int main(void)
     
       //Starting Seq
     if (ssq.PCM_startCommand == 1){
-     //   ssqErrorState = ExecStartSeq(&ssq,&ss);
-        
-        ssqErrorState =  ExecStartSeqWithAccelFF(&ssq,&ss,&a);
-
+     //   ssqErrorState = ExecStartSeq(&ssq,&ss);     
+        ssqErrorState =  ExecStartSeqWithAccelFF(&ssq,&ss,&a,&lo);
         if (ssqErrorState != NO_ERROR){
           ssq.globalStartSeqTimer = 0;
           ss.CustomFaults = CC_START_SEQ_FAIL;
@@ -573,6 +591,7 @@ int main(void)
     
     if ((ss.cc_state == CC_ERROR) || (ss.cc_state ==CC_RUNNING_OL_ERROR)){ // turn off. running this continously prevents any other command from restarting the motor.Precharge command from PCM resets this.       
         a.ffActive = 0;
+        lo.active = 0;
         if (ss.CustomFaults == CC_CLOSED_LOOP_FAIL){
           if (regenRampApplied == 0){
             applyRegen(ss.motorDirection); 
@@ -622,6 +641,7 @@ int main(void)
     /* whatever the state, brake - will fire even when in error ->  */
     if (ss.travelledDist >= 53){ //hardcode
        a.ffActive = 0;
+       lo.active = 0;
        TMCM_SpeedLoop_TurnOff(); 
        ss.cc_ramp = CC_RAMPOFF;
        ss.cc_state = CC_ERROR; // has to be error to stop it looking at the continous can msgs
@@ -634,6 +654,7 @@ int main(void)
     
     if (cc_turnOff){ // used everywhere to turn off correctly
       a.ffActive = 0;
+      lo.active = 0;
       TMCM_SpeedLoop_TurnOff(); 
       ss.cc_ramp = CC_RAMPOFF;
       ss.cc_state = CC_FINISH;
@@ -1520,12 +1541,23 @@ void FOC_CalcCurrRef(uint8_t bMotor)
   if(FOCVars[bMotor].bDriveInput == INTERNAL)
   { int32_t totalIq_MotorSpace;
     int16_t hTeref = STC_CalcTorqueReference(pSTC[bMotor]);
-    
+   
+    /* now convert compensation torque to what we want and apply it*/
+    totalIq_MotorSpace = hTeref;    
     a.rawIQ = hTeref;
+    lo.rawIQ =hTeref;
+    
     if (a.ffActive){
-      totalIq_MotorSpace = (int32_t)hTeref + (int32_t)a.accelFF_PK_s16;
-    }else{
-      totalIq_MotorSpace = (int32_t)hTeref ;
+      totalIq_MotorSpace += (int32_t)a.accelFF_PK_s16;
+    }
+    a.IQwFF = totalIq_MotorSpace;
+    lo.IQwaFF = totalIq_MotorSpace;
+    
+    if (lo.active){
+      leunbergObserverExec(&lo);
+      lo.compensationTorque_Nm_s16 = (int16_t)(lo.compensationTorque_Nm * NM_TO_S16_CONVERSION_FACTOR);
+      totalIq_MotorSpace += lo.compensationTorque_Nm_s16;
+      lo.IQw_aFF_wLO = totalIq_MotorSpace;
     }
     
     if (totalIq_MotorSpace > IQMAX) {
@@ -1533,9 +1565,8 @@ void FOC_CalcCurrRef(uint8_t bMotor)
     } else if (totalIq_MotorSpace < -IQMAX) {
       totalIq_MotorSpace = -IQMAX;
     }
-       
-    a.IQwFF = totalIq_MotorSpace;
     
+    lo.prevTorque_Nm = (float)totalIq_MotorSpace * S16_TO_NM_CONVERSION_FACTOR;
     FOCVars[bMotor].hTeref = totalIq_MotorSpace;
     
     // 2. Convert to Electrical Iq, flipping the sign if reverse wound
@@ -1544,6 +1575,8 @@ void FOC_CalcCurrRef(uint8_t bMotor)
     } else {
         FOCVars[bMotor].Iqdref.q = FOCVars[bMotor].hTeref;
     }
+    
+
   }
 }
 
@@ -1585,20 +1618,16 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
     _100ms_counter++;
     if(lcc.timerOn_bool){lcc.increment_signal=1;} //For manual continous control 
     if (ssq.PCM_startCommand){ssq.globalStartSeqTimer+=100;}
+    
     triggerSPIAngleReading = 1;
     ss.travelledDist += (ss.currentAbsRpm/1800.0f) * 0.6908f; //rpm /((60 * 10) * GR) * pi*D, D= 0.2m,newD = 0.22
-    
-
-    if(_100ms_counter%10 == 0){
-      if(st_calib_on){st_increment=1;st_counter++;} // for stiction torque calibration
-    }
    
-      //KEEP SENDING DATA
-      FDCAN_CC_TMCM_sendRunTimeData();
-      FDCAN_CC_TMCM_sendStatusData();
-      if (ss.cc_state == CC_ERROR){
-        FDCAN_TMCM_StopFrame(ss.CustomFaults,ss.customFaultErrorVal);
-      }
+    //KEEP SENDING DATA
+    FDCAN_CC_TMCM_sendRunTimeData();
+    FDCAN_CC_TMCM_sendStatusData();
+    if (ss.cc_state == CC_ERROR){
+      FDCAN_TMCM_StopFrame(ss.CustomFaults,ss.customFaultErrorVal);
+    }
   }
   
 }

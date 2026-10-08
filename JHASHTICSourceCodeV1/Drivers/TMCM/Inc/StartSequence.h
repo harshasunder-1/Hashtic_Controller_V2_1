@@ -17,7 +17,7 @@
 #define RPM_STEADYSTATE 600
 
 enum StartState { IDLE_WAITING, START_SEQUENCE, SPEED_LOOP_SYNC,RAMPING_TO_TARGET,WAIT_PCM,TRANSITION_DONE };
-typedef enum { NO_ERROR, START_STALL,SPEED_HANDOVER_TIMEOUT, PCM_HANDOVER_TIMEOUT }ErrorState;
+typedef enum { NO_ERROR, START_STALL,SPEED_HANDOVER_TIMEOUT,SPEED_RAMP_FAIL, PCM_HANDOVER_TIMEOUT }ErrorState;
 
 typedef struct{
   uint8_t currentState;
@@ -27,6 +27,8 @@ typedef struct{
   
   uint8_t PCM_startCommand;
   uint8_t speedRampStarted;
+  
+  int32_t logicalTorque;
  
 }startSeq;
 
@@ -34,7 +36,8 @@ extern startSeq ssq;
 
 void initializeStartSeqParams( startSeq *ssq_);
 ErrorState ExecStartSeq(startSeq *ssq_,systemState *ss);
-ErrorState ExecStartSeqWithAccelFF(startSeq *ssq_,systemState *ss, accelControl *a);
+//ErrorState ExecStartSeqWithAccelFF(startSeq *ssq_,systemState *ss, accelControl *a);
+ErrorState ExecStartSeqWithAccelFF(startSeq *ssq_,systemState *ss, accelControl *a,loadObserver *lo);
 
 void resetStartSeqParams( startSeq *ssq);
 void resetStartSeqErrorState( startSeq *ssq);
