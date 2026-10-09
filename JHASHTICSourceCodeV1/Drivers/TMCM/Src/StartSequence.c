@@ -298,10 +298,6 @@ ErrorState ExecStartSeqWithAccelFF(startSeq *ssq_,systemState *ss, accelControl 
         if (ssq_->globalStartSeqTimer >= (a->rampupTime_ms + T_RAMPUP_OFFSET)) {
             a->ffActive = 0;
             a->accelFF_PK_s16 = 0;
-            ssq_->errorState = SPEED_RAMP_FAIL;
-            MC_StopMotor1();
-            ssq_->currentState = IDLE_WAITING;
-            break;
         }
         break;
     

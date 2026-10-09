@@ -325,25 +325,38 @@ int main(void)
   
     // TUNING FROM CLAUDE Document - CHECK AGAIN.
     // Proportional Gain: Sets Kp = 55.6 Nm/(rad/s)
-  /*  PID_SetKP(&PIDSpeedHandle_M1, 24344);
+    PID_SetKP(&PIDSpeedHandle_M1, 24344);
     PID_SetKPDivisorPOW2(&PIDSpeedHandle_M1, 1);
 
     // Integral Gain: Sets Ki*Ts = 2.22 Nm/(rad/s)
     PID_SetKI(&PIDSpeedHandle_M1, 15552);
-    PID_SetKIDivisorPOW2(&PIDSpeedHandle_M1, 5); */
+    PID_SetKPDivisorPOW2(&PIDSpeedHandle_M1, 5); 
+    // In effect Kp = 24344,5 , Ki = 15552/1024
+     
+    
+    //So setting it correctly here
+    PID_SetKP(&PIDSpeedHandle_M1, 24344);
+    PID_SetKPDivisorPOW2(&PIDSpeedHandle_M1, 5);
+
+    PID_SetKI(&PIDSpeedHandle_M1, 15552);
+    PID_SetKIDivisorPOW2(&PIDSpeedHandle_M1, 1024); 
+    
   
     //rd1 - 4800/16 , 8,512
     // rd2 - 4800,32 , 8/512
     //rd3 - 6800,32,  8,1024
   
   
-  // Moderate Proportional Gain (Effective Kp = 1000)
-    PID_SetKPDivisorPOW2(&PIDSpeedHandle_M1, 4); // Divisor = 32
-    PID_SetKP(&PIDSpeedHandle_M1, 16000);         // 4800 / 32 = 150
+  
+  // Aggressive Proportional Gain (Effective Kp = 1000)
+   /* PID_SetKPDivisorPOW2(&PIDSpeedHandle_M1, 4); // Divisor = 16
+    PID_SetKP(&PIDSpeedHandle_M1, 16000);        // 16000 / 16 = 1000
 
-    // Moderate Integral Gain (Effective Ki = 10)
+    // Aggressive Integral Gain (Effective Ki = 10)
     PID_SetKIDivisorPOW2(&PIDSpeedHandle_M1, 8); // Divisor = 256
-    PID_SetKI(&PIDSpeedHandle_M1, 2560); // initally 512
+    PID_SetKI(&PIDSpeedHandle_M1, 2560);
+ */
+    
 
     //to prevent spurious turns ons, for ten sec from here, any can msg received is ingested, but not acted upon
     startTickTime = HAL_GetTick();

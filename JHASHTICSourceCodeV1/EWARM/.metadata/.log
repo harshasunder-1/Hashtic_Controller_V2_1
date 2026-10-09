@@ -1,0 +1,12 @@
+!SESSION 2026-10-08 13:26:16.517 -----------------------------------------------
+eclipse.buildId=unknown
+java.version=11.0.20.1
+java.vendor=Eclipse Adoptium
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_IN
+Command-line arguments:  -os win32 -ws win32 -arch x86_64 -data E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM
+
+!ENTRY com.iar.cdt.arm.toolchain.cmsis.adapter 1 0 2026-10-08 13:26:43.390
+!MESSAGE Using CMSIS pack repositories: http://links.iar.com/cmsis/pack/
+
+!ENTRY com.iar.cmsismanager.product 1 0 2026-10-08 13:26:45.417
+!MESSAGE CMSIS Agent interface registered with service registry at ServiceLocation(host:\\.\pipe\iar-cspy-cpp-binary-com.iar.thrift.service.registry-0919cce3-c7d3-4af1-8cc4-b95deb4eb08a-1, port:0, protocol:Binary, transport:Pipe)

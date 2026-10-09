@@ -35,7 +35,7 @@
                                                          are not used */
 														 
 /*********** Bus voltage sensing section ****************/
-#define VBUS_PARTITIONING_FACTOR      0.0037 /*!< It expresses how 
+#define VBUS_PARTITIONING_FACTOR      0.0037359 /*!< It expresses how 
                                                        much the Vbus is attenuated  
                                                        before being converted into 
                                                        digital value */
