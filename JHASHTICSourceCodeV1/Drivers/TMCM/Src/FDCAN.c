@@ -26,6 +26,7 @@ extern brakeCtrl b;
 extern logController logC;
 extern accelControl a;
 extern loadObserver lo;
+extern CustomPI pi;
 //CAN variables here
 uint32_t functionID,source_address, dst_address;
 
@@ -306,7 +307,7 @@ void FDCAN_parseForMotor(void){ // This gets toggled inside the interrupt. Whene
     canSSIp.steadyStateTime =  ((RxData[7]<<8)|(RxData[6]));
         
     if(canSSIp.motorAction == STOP_COASTING){ 
-      cc_turnOff = 1;
+     // cc_turnOff = 1;
     }
     
     else if(canSSIp.motorAction == MOTORON){
@@ -432,6 +433,7 @@ void FDCAN_parseForMotor(void){ // This gets toggled inside the interrupt. Whene
     PID_HandleInit(&PIDSpeedHandle_M1);   
     PID_HandleInit(&PIDIqHandle_M1);
     PID_HandleInit(&PIDIdHandle_M1);
+    setCustomKpValues(&pi);
     
     FDCAN_SendPCMAckMsg(1);
     break;

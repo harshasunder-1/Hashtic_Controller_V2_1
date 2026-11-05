@@ -70,6 +70,7 @@ EEConfig eecfg;
 logController logC;
 accelControl a;
 loadObserver lo;
+CustomPI pi;
 
 extern FOCVars_t FOCVars[1];
 extern int16_t hTargetSpeedUserDefined;
@@ -159,6 +160,11 @@ uint8_t regenRampApplied = 0;
 uint32_t startTickTime = 0;
 extern MCI_Handle_t * pMCI[NBR_OF_MOTORS];
 
+void manualStart(int8_t direction,uint16_t targetRPM,uint16_t brakeDistance);
+uint8_t startManual = 0;
+
+uint16_t minVoltage = 500;
+uint8_t startVoltageMinning = 0;
 /* USER CODE END 0 */
 
 /**
@@ -173,7 +179,7 @@ int main(void)
   /* USER CODE END 1 */
   
 
-  /* MCU Configuration---3-----------------------------------------------------*/
+  /* MCU Configuration--------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
@@ -283,7 +289,7 @@ int main(void)
           ss.cc_state = CC_ERROR;
       }
    }
-    
+  
   /*Now setup all state variables */
   if (ss.cc_state == CC_IDLE){
     InitializeEncFaults(&encFlts);
@@ -323,40 +329,28 @@ int main(void)
     }
   }
   
-    // TUNING FROM CLAUDE Document - CHECK AGAIN.
-    // Proportional Gain: Sets Kp = 55.6 Nm/(rad/s)
+  
+  //put same as drive param units cos we know theyre safe Kp = 14000/512, 5/1024. Kp is very small but large electrical noise.Ki is also very small           
+   pi.Kp = 14000;
+   pi.KpPow2 = 9;
+   pi.Ki = 5;
+   pi.KiPow2 = 10;
+   setCustomKpValues(&pi);
+   
+  /*
     PID_SetKP(&PIDSpeedHandle_M1, 24344);
-    PID_SetKPDivisorPOW2(&PIDSpeedHandle_M1, 1);
-
-    // Integral Gain: Sets Ki*Ts = 2.22 Nm/(rad/s)
-    PID_SetKI(&PIDSpeedHandle_M1, 15552);
-    PID_SetKPDivisorPOW2(&PIDSpeedHandle_M1, 5); 
-    // In effect Kp = 24344,5 , Ki = 15552/1024
-     
-    
-    //So setting it correctly here
-    PID_SetKP(&PIDSpeedHandle_M1, 24344);
-    PID_SetKPDivisorPOW2(&PIDSpeedHandle_M1, 5);
+    PID_SetKPDivisorPOW2(&PIDSpeedHandle_M1, 4);
 
     PID_SetKI(&PIDSpeedHandle_M1, 15552);
-    PID_SetKIDivisorPOW2(&PIDSpeedHandle_M1, 1024); 
+    PID_SetKIDivisorPOW2(&PIDSpeedHandle_M1, 9); 
     
-  
-    //rd1 - 4800/16 , 8,512
-    // rd2 - 4800,32 , 8/512
-    //rd3 - 6800,32,  8,1024
-  
-  
-  
-  // Aggressive Proportional Gain (Effective Kp = 1000)
-   /* PID_SetKPDivisorPOW2(&PIDSpeedHandle_M1, 4); // Divisor = 16
-    PID_SetKP(&PIDSpeedHandle_M1, 16000);        // 16000 / 16 = 1000
+   //// Configure 12 Nm max Kp push at 50 RPM, Ti = 1s integral reset
+    PID_SetKP(&PIDSpeedHandle_M1, 650);//was 1365
+    PID_SetKPDivisorPOW2(&PIDSpeedHandle_M1, 0);
 
-    // Aggressive Integral Gain (Effective Ki = 10)
-    PID_SetKIDivisorPOW2(&PIDSpeedHandle_M1, 8); // Divisor = 256
-    PID_SetKI(&PIDSpeedHandle_M1, 2560);
- */
-    
+    PID_SetKI(&PIDSpeedHandle_M1, 350);
+    PID_SetKIDivisorPOW2(&PIDSpeedHandle_M1, 8); 
+    */
 
     //to prevent spurious turns ons, for ten sec from here, any can msg received is ingested, but not acted upon
     startTickTime = HAL_GetTick();
@@ -527,6 +521,19 @@ int main(void)
         }
     }
     
+    
+    if (startManual){
+      manualStart(1,500,4);
+      startManual = 0;
+      startVoltageMinning = 1;
+    }
+    
+    if (startVoltageMinning){
+      if (ss.DC_VOLTAGE < minVoltage){
+        minVoltage = ss.DC_VOLTAGE;
+      }
+      
+    }
       //Starting Seq
     if (ssq.PCM_startCommand == 1){
      //   ssqErrorState = ExecStartSeq(&ssq,&ss);     
@@ -652,7 +659,7 @@ int main(void)
     We need to do something that changes action when error hits , maybe for some errors we can do regen, like CLOSED loop, etc where 
     motor error is not there, otherwise we coast, and where speed is below some no, hit the brake.*/
     /* whatever the state, brake - will fire even when in error ->  */
-    if (ss.travelledDist >= 53){ //hardcode
+    if (ss.travelledDist >= 20){ //hardcode
        a.ffActive = 0;
        lo.active = 0;
        TMCM_SpeedLoop_TurnOff(); 
@@ -1569,8 +1576,8 @@ void FOC_CalcCurrRef(uint8_t bMotor)
     if (lo.active){
       leunbergObserverExec(&lo);
       lo.compensationTorque_Nm_s16 = (int16_t)(lo.compensationTorque_Nm * NM_TO_S16_CONVERSION_FACTOR);
-      totalIq_MotorSpace += lo.compensationTorque_Nm_s16;
-      lo.IQw_aFF_wLO = totalIq_MotorSpace;
+     // totalIq_MotorSpace += lo.compensationTorque_Nm_s16;
+      //lo.IQw_aFF_wLO = totalIq_MotorSpace;
     }
     
     if (totalIq_MotorSpace > IQMAX) {
@@ -1643,6 +1650,70 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
     }
   }
   
+}
+
+
+void manualStart(int8_t direction,uint16_t targetRPM,uint16_t brakeDistance){
+  
+      if(direction==-1){ // REVERSE FROM APP     
+        if (c.positionInPod == LEFT_SIDE){ss.podDirection = -1;} // For signFor CW = 1,left side motor needs to rotate counter clockwise.
+        if (c.positionInPod == RIGHT_SIDE){ss.podDirection = 1;} // For signFor CW = 1,right side motor needs to rotate clockwise.
+      }
+      else if(direction==1){ // FORWARD FROM APP
+        if (c.positionInPod == LEFT_SIDE){ss.podDirection = 1;}  // opposite for above
+        if (c.positionInPod == RIGHT_SIDE){ss.podDirection = -1;}
+      }
+      else{
+        return;
+      }
+          
+      ss.motorDirection = ss.podDirection;
+      lo.localPolarity =  ss.motorDirection * c.signForCWRotation; //needed for load observer calcs
+      
+      ss.targetRPM = targetRPM; //canContIp.controlQty;
+      ss.brakeDistance = brakeDistance;//canContIp.indexID;
+      
+      //safety checks
+      if (ss.targetRPM >= 2500){
+        return;
+      }
+      if (ss.brakeDistance >= 500){
+        return;
+      }
+                   
+    //calculate acceleration vars here.
+    calculateAccelerationVars(&ss, &a);
+    //Zero LO vars
+    ZeroLOVars(&lo); //turned on after the kick torque is applied
+             
+    ss.CL_DeltaRPMThreshold =  Calculate_CLDeltaRPMThreshold(ss.targetRPM);
+    ss.loggingOn = 1;
+           
+    ss.CustomFaults = NO_FAULTS;
+    ss.cc_state = CC_RUNNING_CL; 
+    ss.cc_ramp = CC_RAMPUP;
+    ss.runType=CC;
+    ss.travelledDist = 0;
+    
+    // at beginning of run make this zero
+    regenRampApplied = 0;
+    ss.distAtFault = 0;
+    ss.faultTick = 0;
+    ss.encoderFault = 0;
+    
+    //calculate acceleration vars for feedforward
+    calculateAccelerationVars(&ss, &a);
+    
+    DisableEncoderFltChking(&encFlts);
+    ResetEncFaults(&encFlts);
+    EnableEncoderFltChking(&encFlts);
+    
+    FDCAN_SendPCMAckMsg(1);
+              
+    //start the StartSeq
+    resetStartSeqParams( &ssq);
+    resetStartSeqErrorState( &ssq);
+    ssq.PCM_startCommand = 1;
 }
 
 uint16_t IndexPinCounter;

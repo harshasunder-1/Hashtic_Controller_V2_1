@@ -11,7 +11,7 @@
 #define T_HANDOVER_MAX 3000 // time in which if we dont see required speed we turn off
 #define T_RAMPUP_OFFSET 300 // how much delta ms from the calcualted rampup time in which the target rampup must be complete. Its 
 
-#define START_TORQUE_IQ 5500//command to start the torque
+#define START_TORQUE_IQ 7500//command to start the torque
 #define RPM_STALL_MIN 5 // RPM below which we consider it a stall
 #define RPM_HANDOVER 50 
 #define RPM_STEADYSTATE 600
@@ -27,7 +27,7 @@ typedef struct{
   
   uint8_t PCM_startCommand;
   uint8_t speedRampStarted;
-  
+
   int32_t logicalTorque;
  
 }startSeq;

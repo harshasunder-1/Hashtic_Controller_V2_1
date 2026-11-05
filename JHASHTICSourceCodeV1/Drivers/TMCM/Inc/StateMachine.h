@@ -13,7 +13,7 @@
 
 
 //Vars for load observer and Accel FF
-#define RAMPUP_RPM_PER_SEC 300.0f // 250 is 1m/s2
+#define RAMPUP_RPM_PER_SEC 400.0f // 250 is 1m/s2
 #define ESTIMATED_J_KGM2 0.222f //0.222f //0.222f on ground, 0.0005 when lifted   // to check
 #define KT  0.266f // 20Nm @ 75 rms = 0.266 Nm/Arms
 #define ARMS_TO_S16_CONVERSION_FACTOR 252.05f // 130RMS/183.33PK = 32767. so EACH RMS = 32767/130 = 252 s16 units . Max rms we re allowed is 75 = 75*252 ~19K s16 units 
@@ -130,6 +130,13 @@ typedef struct {
 }accelControl;
 
 typedef struct {
+  uint16_t Kp;
+  uint16_t KpPow2;
+  uint16_t Ki;
+  uint16_t KiPow2;
+}CustomPI;
+
+typedef struct {
   uint8_t active;
   float localPolarity;
   float prevTorque_Nm;
@@ -172,5 +179,6 @@ float getCurrentVelocity_RadSec(ENCODER_Handle_t *pHandle);
 float getCurrentPosition_Rad(ENCODER_Handle_t *pHandle);
 void leunbergObserverExec(loadObserver *lo);
 
+void setCustomKpValues(CustomPI *pi);
 
 #endif

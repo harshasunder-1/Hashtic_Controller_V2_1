@@ -230,3 +230,12 @@ void leunbergObserverExec(loadObserver *lo){
     // You can plot this against your old wRaw to see how much cleaner it is.
     lo->currentVelocityRadsec = lo->w_hat; 
 }
+
+
+void setCustomKpValues(CustomPI *pi){
+  PID_SetKP(&PIDSpeedHandle_M1, pi->Kp);
+  PID_SetKPDivisorPOW2(&PIDSpeedHandle_M1, pi->KpPow2);
+
+  PID_SetKI(&PIDSpeedHandle_M1, pi->Ki);
+  PID_SetKIDivisorPOW2(&PIDSpeedHandle_M1, pi->KiPow2); 
+}

@@ -1,5 +1,12 @@
-E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\JHASHTICSourceCodeV1\BrowseInfo\User_8454777428142420917.dir\main.pbi: \
-  E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\Src\main.c \
+E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\JHASHTICSourceCodeV1\BrowseInfo\TMCM_13913985769163509077.dir\StateMachine.pbi: \
+  E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\Drivers\TMCM\Src\StateMachine.c \
+  E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\Drivers\TMCM\Inc\StateMachine.h \
+  C:\Program\ Files\IAR\ Systems\Embedded\ Workbench\ 9.2\arm\inc\c\stdint.h \
+  C:\Program\ Files\IAR\ Systems\Embedded\ Workbench\ 9.2\arm\inc\c\ycheck.h \
+  C:\Program\ Files\IAR\ Systems\Embedded\ Workbench\ 9.2\arm\inc\c\yvals.h \
+  C:\Program\ Files\IAR\ Systems\Embedded\ Workbench\ 9.2\arm\inc\c\DLib_Defaults.h \
+  C:\Program\ Files\IAR\ Systems\Embedded\ Workbench\ 9.2\arm\inc\c\DLib_Config_Full.h \
+  C:\Program\ Files\IAR\ Systems\Embedded\ Workbench\ 9.2\arm\inc\c\DLib_Product.h \
   E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\Inc\main.h \
   E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\Drivers\STM32G4xx_HAL_Driver\Inc\stm32g4xx_hal.h \
   E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\Inc\stm32g4xx_hal_conf.h \
@@ -8,12 +15,6 @@ E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\JHASHTICSourceCodeV
   E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\Drivers\CMSIS\Device\ST\STM32G4xx\Include\stm32g4xx.h \
   E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\Drivers\CMSIS\Device\ST\STM32G4xx\Include\stm32g474xx.h \
   E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\Drivers\CMSIS\Include\core_cm4.h \
-  C:\Program\ Files\IAR\ Systems\Embedded\ Workbench\ 9.2\arm\inc\c\stdint.h \
-  C:\Program\ Files\IAR\ Systems\Embedded\ Workbench\ 9.2\arm\inc\c\ycheck.h \
-  C:\Program\ Files\IAR\ Systems\Embedded\ Workbench\ 9.2\arm\inc\c\yvals.h \
-  C:\Program\ Files\IAR\ Systems\Embedded\ Workbench\ 9.2\arm\inc\c\DLib_Defaults.h \
-  C:\Program\ Files\IAR\ Systems\Embedded\ Workbench\ 9.2\arm\inc\c\DLib_Config_Full.h \
-  C:\Program\ Files\IAR\ Systems\Embedded\ Workbench\ 9.2\arm\inc\c\DLib_Product.h \
   E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\Drivers\CMSIS\Include\cmsis_version.h \
   E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\Drivers\CMSIS\Include\cmsis_compiler.h \
   E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\Drivers\CMSIS\Include\cmsis_iccarm.h \
@@ -49,9 +50,7 @@ E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\JHASHTICSourceCodeV
   E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\Drivers\STM32G4xx_HAL_Driver\Inc\stm32g4xx_hal_uart.h \
   E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\Drivers\STM32G4xx_HAL_Driver\Inc\stm32g4xx_hal_uart_ex.h \
   E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\Drivers\STM32G4xx_HAL_Driver\Inc\stm32g4xx_ll_pwr.h \
-  E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\Inc\motorcontrol.h \
-  E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\Inc\mc_config.h \
-  E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\MCSDK_v5.4.7\MotorControl\MCSDK\MCLib\Any\Inc\pid_regulator.h \
+  E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\MCSDK_v5.4.7\MotorControl\MCSDK\MCLib\Any\Inc\state_machine.h \
   E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\MCSDK_v5.4.7\MotorControl\MCSDK\MCLib\Any\Inc\mc_type.h \
   C:\Program\ Files\IAR\ Systems\Embedded\ Workbench\ 9.2\arm\inc\c\stdbool.h \
   E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\Inc\mc_stm_types.h \
@@ -68,10 +67,14 @@ E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\JHASHTICSourceCodeV
   E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\Drivers\STM32G4xx_HAL_Driver\Inc\stm32g4xx_ll_comp.h \
   E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\Drivers\STM32G4xx_HAL_Driver\Inc\stm32g4xx_ll_opamp.h \
   E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\Drivers\STM32G4xx_HAL_Driver\Inc\stm32g4xx_ll_cordic.h \
+  E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\MCSDK_v5.4.7\MotorControl\MCSDK\MCLib\Any\Inc\encoder_speed_pos_fdbk.h \
+  E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\MCSDK_v5.4.7\MotorControl\MCSDK\MCLib\Any\Inc\speed_pos_fdbk.h \
+  E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\Inc\motorcontrol.h \
+  E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\Inc\mc_config.h \
+  E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\MCSDK_v5.4.7\MotorControl\MCSDK\MCLib\Any\Inc\pid_regulator.h \
   E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\MCSDK_v5.4.7\MotorControl\MCSDK\MCLib\Any\Inc\revup_ctrl.h \
   E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\MCSDK_v5.4.7\MotorControl\MCSDK\MCLib\Any\Inc\speed_torq_ctrl.h \
   E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\MCSDK_v5.4.7\MotorControl\MCSDK\MCLib\Any\Inc\pid_regulator.h \
-  E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\MCSDK_v5.4.7\MotorControl\MCSDK\MCLib\Any\Inc\speed_pos_fdbk.h \
   E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\MCSDK_v5.4.7\MotorControl\MCSDK\MCLib\Any\Inc\virtual_speed_sensor.h \
   E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\MCSDK_v5.4.7\MotorControl\MCSDK\MCLib\Any\Inc\sto_speed_pos_fdbk.h \
   E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\MCSDK_v5.4.7\MotorControl\MCSDK\MCLib\Any\Inc\pwm_curr_fdbk.h \
@@ -89,7 +92,6 @@ E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\JHASHTICSourceCodeV
   E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\Inc\user_interface.h \
   E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\MCSDK_v5.4.7\MotorControl\MCSDK\MCLib\Any\Inc\mc_type.h \
   E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\Inc\mc_interface.h \
-  E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\MCSDK_v5.4.7\MotorControl\MCSDK\MCLib\Any\Inc\state_machine.h \
   E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\MCSDK_v5.4.7\MotorControl\MCSDK\MCLib\Any\Inc\mc_tuning.h \
   E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\MCSDK_v5.4.7\MotorControl\MCSDK\MCLib\Any\Inc\revup_ctrl.h \
   E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\MCSDK_v5.4.7\MotorControl\MCSDK\MCLib\Any\Inc\sto_pll_speed_pos_fdbk.h \
@@ -118,7 +120,6 @@ E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\JHASHTICSourceCodeV
   E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\MCSDK_v5.4.7\MotorControl\MCSDK\UILibrary\Inc\frame_communication_protocol.h \
   E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\MCSDK_v5.4.7\MotorControl\MCSDK\UILibrary\Inc\dac_common_ui.h \
   E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\MCSDK_v5.4.7\MotorControl\MCSDK\MCLib\G4xx\Inc\ics_g4xx_pwm_curr_fdbk.h \
-  E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\MCSDK_v5.4.7\MotorControl\MCSDK\MCLib\Any\Inc\encoder_speed_pos_fdbk.h \
   E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\MCSDK_v5.4.7\MotorControl\MCSDK\MCLib\Any\Inc\enc_align_ctrl.h \
   E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\MCSDK_v5.4.7\MotorControl\MCSDK\MCLib\Any\Inc\ramp_ext_mngr.h \
   E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\MCSDK_v5.4.7\MotorControl\MCSDK\MCLib\Any\Inc\circle_limitation.h \
@@ -128,27 +129,4 @@ E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\JHASHTICSourceCodeV
   E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\Inc\pmsm_motor_parameters.h \
   E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\Inc\drive_parameters.h \
   E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\Inc\power_stage_parameters.h \
-  E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\Inc\mc_api.h \
-  C:\Program\ Files\IAR\ Systems\Embedded\ Workbench\ 9.2\arm\inc\c\stdlib.h \
-  C:\Program\ Files\IAR\ Systems\Embedded\ Workbench\ 9.2\arm\inc\c\DLib_Product_stdlib.h \
-  C:\Program\ Files\IAR\ Systems\Embedded\ Workbench\ 9.2\arm\inc\c\math.h \
-  C:\Program\ Files\IAR\ Systems\Embedded\ Workbench\ 9.2\arm\inc\c\DLib_float_setup.h \
-  E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\Drivers\AS5x47P\AS5x47P.h \
-  E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\Drivers\AS5x47P\EncoderFns.h \
-  E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\Drivers\AS5x47P\AS5x47P.h \
-  E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\Drivers\TMCM\Inc\FDCAN.h \
-  E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\Drivers\TMCM\Inc\TemperatureLogic.h \
-  E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\Drivers\TMCM\Inc\StateMachine.h \
-  E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\Drivers\TMCM\Inc\Configuration.h \
-  E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\Drivers\TMCM\Inc\ControlFns.h \
-  E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\Drivers\TMCM\Inc\StateMachine.h \
-  E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\Drivers\TMCM\Inc\EncFaults.h \
-  E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\Drivers\TMCM\Inc\States.h \
-  E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\Drivers\TMCM\Inc\TemperatureLogic.h \
-  E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\Drivers\TMCM\Inc\StartSequence.h \
-  E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\Drivers\EEPROM\Inc\motor_config.h \
-  E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\Drivers\EEPROM\Inc\eeprom_emul.h \
-  E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\Drivers\EEPROM\Inc\eeprom_emul_conf.h \
-  E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\Drivers\EEPROM\Inc\eeprom_emul_types.h \
-  E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\Drivers\EEPROM\Inc\flash_interface.h \
-  E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\Drivers\STM32G4xx_HAL_Driver\Inc\stm32g4xx_ll_crc.h
+  E:\Harsha\Hashtic_Controller_V2_1\JHASHTICSourceCodeV1\EWARM\..\Inc\mc_api.h
